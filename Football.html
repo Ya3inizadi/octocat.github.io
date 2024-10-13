@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Game</title>
+    <style>
+        body { margin: 0; }
+        canvas { background-color: green; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // توپ
+        let ball = { x: 200, y: 300, radius: 10, dx: 2 };
+
+        // بازیکنان
+        let players = [];
+        for (let i = 0; i < 5; i++) {
+            players.push({ x: 50, y: 100 + i * 100 });
+            players.push({ x: 350, y: 100 + i * 100 }); // دروازه راست
+        }
+
+        // کشیدن زمین فوتبال
+        function drawField() {
+            ctx.fillStyle = 'green';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // خط‌های زمین
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 5;
+
+            // مستطیل بیرونی
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+            // خط وسط
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 0);
+            ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+
+            // دایره وسط
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 50, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // دروازه چپ
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, (canvas.height / 2) - 50, 10, 100);
+            // دروازه راست
+            ctx.fillRect(canvas.width - 10, (canvas.height / 2) - 50, 10, 100);
+        }
+
+        // کشیدن توپ
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'blue'; // رنگ توپ
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // کشیدن بازیکنان
+        function drawPlayers() {
+            for (let player of players) {
+                ctx.beginPath();
+                ctx.arc(player.x, player.y, 10, 0, Math.PI * 2);
+                ctx.fillStyle = 'black'; // رنگ لباس بازیکنان
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        // به‌روزرسانی وضعیت توپ
+        function updateBall() {
+            ball.x += ball.dx;
+
+            // برخورد توپ با دیواره‌ها
+            if (ball.x + ball.radius > canvas.width || ball.x - ball.radius < 0) {
+                ball.dx = -ball.dx; // تغییر جهت
+            }
+        }
+
+        // حلقه بازی
+        function gameLoop() {
+            drawField();
+            drawBall();
+            drawPlayers();
+            updateBall();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // شروع بازی
+        gameLoop();
+    </script>
+</body>
+</html>
